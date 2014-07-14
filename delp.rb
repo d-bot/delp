@@ -2,6 +2,13 @@ require 'rubygems'
 require 'sinatra'
 require 'yelp'
 
+Yelp.client.configure do |config|
+   config.consumer_key = "vfwATxKSqtqo3mKw4NB9iQ"
+   config.consumer_secret = "5v-ft5mXblCwZo0VDuUxkku2nNU"
+   config.token = "sHh6HO17PyaFk_SzMRlBxGb5LcKDtMYs"
+   config.token_secret = "lwdX0nGWYjra8v4S6HEALASwVao"
+end
+
 configure do
 #  enable :sessions
 	set :bind, "162.243.137.224"
@@ -30,22 +37,16 @@ get '/' do
   erb :search_form
 end
 
-get '/result' do
-	erb :result
-end
-
-post '/search' do
+post '/' do
 	@keyword = params[:keyword].gsub(' ', '+')
 	@city = params[:city].gsub(' ', '+')
 	@reviews = params[:reviews]
 	@stars = params[:stars]
 
 
-	Yelp.client.configure do |config|
-	end
 
 	params = { term: "#{@keyword}",
-						 #limit: 4,
+						 #limit: 20,
 						 #category_filter: 'discgolf'
 					 }
 
@@ -53,36 +54,26 @@ post '/search' do
 
 	response = Yelp.client.search("#{@city}", params, locale)
 
+	@table ||= []
+
 	response.businesses.each do |ret|
-		table ||= []
 		ret.rating_img_url_small.match(/\S+stars_small_(\d+).*\.png/) ; stars = $1.to_i
 
-		if ret.review_count > @reviews.to_i and stars > @stars.to_i
-			table << ret.name
-			table << ret.review_count
-			table << stars
-			#table << ret.location.address[0]
-			#table << ret.location.city
-			#table << ret.location.state_code
-			#table << ret.location.postal_code
+		if ret.review_count > @reviews.to_i and stars >= @stars.to_i
+			tmp_table = []
+			tmp_table << ret.name
+			tmp_table << ret.url
+			tmp_table << ret.review_count
+			tmp_table << stars
+			tmp_table << ret.location.address[0]
+			tmp_table << ret.location.city
+			tmp_table << ret.location.state_code
+			tmp_table << ret.location.postal_code
+			@table << tmp_table
 		end
-		p table if table.length > 0
 	end
+	p @table if @table.length > 0
 
-
-	html = "
-	<div class=\"row\">
-	<table class=\"table table-bordered table-hover\" style=\"font-size:12px\">
-		<tr>
-			<th>Name</th>
-			<th>Reviews</th>
-			<th>Stars</th>
-		</tr>
-	</table>
-	</div>
-	"
-	erb_template = "/home/dchoi/projects/delp/views/result.erb"
-	File.open(erb_template, 'w') {|f| f.write(html) }
-	redirect "/result"
+	erb :result
 
 end
