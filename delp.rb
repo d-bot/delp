@@ -3,10 +3,6 @@ require 'sinatra'
 require 'yelp'
 
 Yelp.client.configure do |config|
-   config.consumer_key = "vfwATxKSqtqo3mKw4NB9iQ"
-   config.consumer_secret = "5v-ft5mXblCwZo0VDuUxkku2nNU"
-   config.token = "sHh6HO17PyaFk_SzMRlBxGb5LcKDtMYs"
-   config.token_secret = "lwdX0nGWYjra8v4S6HEALASwVao"
 end
 
 configure do
