@@ -53,9 +53,14 @@ post '/' do
 	@table ||= []
 
 	response.businesses.each do |ret|
-		ret.rating_img_url_small.match(/\S+stars_small_(\d+).*\.png/) ; stars = $1.to_i
+		ret.rating_img_url_small.match(/\S+stars_small_(\d+[_half]*)\.png/)
+		if $1.include?("_half")
+			stars = $1.split('_')[0].to_f + 0.5
+		else
+			stars = $1.to_i
+		end
 
-		if ret.review_count > @reviews.to_i and stars >= @stars.to_i
+		if ret.review_count > @reviews.to_i and stars >= @stars.to_f
 			tmp_table = []
 			tmp_table << ret.name
 			tmp_table << ret.url
@@ -68,7 +73,8 @@ post '/' do
 			@table << tmp_table
 		end
 	end
-	p @table if @table.length > 0
+	#puts "#{@keyword}:#{@city}"
+	#p @table if @table.length > 0
 
 	erb :result
 
