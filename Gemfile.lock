@@ -6,6 +6,7 @@ GEM
     faraday_middleware (0.9.1)
       faraday (>= 0.7.4, < 0.10)
     multipart-post (2.0.0)
+    newrelic_rpm (3.9.4.245)
     rack (1.5.2)
     rack-protection (1.5.1)
       rack
@@ -24,5 +25,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  newrelic_rpm
   sinatra
   yelp
