@@ -3,4 +3,4 @@
 # tmp/pids
 # logs
 
-unicorn -c unicorn.rb -E development -D
+unicorn -c u-delp.rb -E development -D
